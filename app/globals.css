@@ -141,6 +141,19 @@ html {
   animation: marquee 30s linear infinite;
 }
 
+@keyframes pan-bg {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-pan-bg {
+  animation: pan-bg 15s linear infinite;
+}
+
 /* Slow bounce for trophy icon */
 @keyframes bounce-slow {
   0%,

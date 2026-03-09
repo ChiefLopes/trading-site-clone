@@ -120,32 +120,53 @@ const HeroSection = () => {
       id="home"
       className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-[#060b09]">
       {/* Background Candlestick Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/candlestick-bg.png"
-          alt=""
-          fill
-          className="object-cover opacity-60"
-          priority
-        />
-        {/* Dark overlay gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#060b09] via-[#060b09]/40 to-[#060b09]/70" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#060b09]/80 via-transparent to-[#060b09]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060b09]/60 via-transparent to-[#060b09]/60" />
+      <div className="absolute inset-0 z-0 overflow-hidden bg-[#060b09]">
+        {/* Infinite Panning Images & Grid */}
+        <div className="absolute inset-0 flex w-[200vw] animate-pan-bg">
+          {/* Grid Pattern spanning the entire panning canvas */}
+          <div
+            className="absolute inset-0 z-10 opacity-[0.1]"
+            style={{
+              backgroundImage:
+                "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+              backgroundSize: "50px 50px",
+            }}
+          />
+          <div className="relative w-[100vw] h-full shrink-0">
+            <Image
+              src="/candlestick-bg.png"
+              alt=""
+              fill
+              className="object-cover opacity-60 mix-blend-lighten"
+              priority
+            />
+          </div>
+          <div className="relative w-[100vw] h-full shrink-0">
+            <Image
+              src="/candlestick-bg.png"
+              alt=""
+              fill
+              className="object-cover opacity-60 mix-blend-lighten"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Brand Green Tint & Fades */}
+        <div className="absolute inset-0 bg-[#c8e632]/5 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060b09] via-[#060b09]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#060b09]/80 via-transparent to-[#0a0f0d]" />
       </div>
 
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4 pt-28 pb-32 max-w-3xl mx-auto">
-        {/* Trophy Icon */}
-        <div className="mb-4 text-4xl animate-bounce-slow">🏆</div>
+        <div className="mb-4 text-3xl animate-bounce-slow">🏆</div>
 
         {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-          <span className="bg-gradient-to-r from-[#7b2ff7] via-[#a855f7] to-[#7b2ff7] bg-clip-text text-transparent">
-            Infinity Digital Trade
-          </span>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+          <span className="text-[#c8e632]">Infinity Digital Trade</span>
           <br />
-          <span className="text-white mt-2 block">
+          <span className="text-white mt-1.5 block font-semibold mix-blend-plus-lighter">
             Leading investment providers
           </span>
         </h1>
