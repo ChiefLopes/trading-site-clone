@@ -18,22 +18,30 @@ export default function DashboardHome() {
   const timelineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Mini Chart Widget (top section)
+    // Mini Chart Widget (top section) - TSLA candlestick chart
     if (miniChartRef.current && !miniChartRef.current.querySelector("script")) {
       const script = document.createElement("script");
       script.src =
-        "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+        "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
       script.async = true;
       script.textContent = JSON.stringify({
+        autosize: true,
         symbol: "NASDAQ:TSLA",
+        interval: "1",
+        timezone: "Etc/UTC",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        allow_symbol_change: false,
+        support_host: "https://www.tradingview.com",
+        backgroundColor: "rgba(0, 0, 0, 0)",
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        calendar: false,
+        hide_volume: false,
         width: "100%",
         height: "100%",
-        locale: "en",
-        dateRange: "1D",
-        colorTheme: "dark",
-        isTransparent: true,
-        autosize: true,
-        largeChartUrl: "",
       });
       miniChartRef.current.appendChild(script);
     }
@@ -118,10 +126,10 @@ export default function DashboardHome() {
         {/* Stats grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           {/* Mini Chart */}
-          <div className="bg-[#111916] border border-white/5 rounded-xl overflow-hidden h-[220px]">
+          <div className="bg-[#111916] border border-white/5 rounded-xl overflow-hidden h-[260px] ">
             <div
               ref={miniChartRef}
-              className="tradingview-widget-container h-full"
+              className="tradingview-widget-container h-full w-full"
             />
           </div>
 
