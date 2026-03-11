@@ -6,7 +6,7 @@ import ScrollAnimation from "./ScrollAnimation";
 const TradingBenefits = () => {
   return (
     <section
-      id="about"
+     
       className="relative bg-black py-24 md:py-32 overflow-hidden">
       {/* Subtle ambient glow behind image */}
       <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#c8e632]/5 rounded-full blur-[120px] pointer-events-none" />

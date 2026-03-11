@@ -8,6 +8,10 @@ html {
   scroll-behavior: smooth;
 }
 
+button {
+    cursor: pointer;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -184,4 +188,46 @@ html {
 
 .animate-bounce-slow {
   animation: bounce-slow 3s ease-in-out infinite;
+}
+
+/* Google Translate widget styling */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-gadget {
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.goog-te-gadget .goog-te-combo option {
+  background-color: #1a1a1a;
+  color: #fff;
+}
+
+.goog-te-gadget > span {
+  display: none !important;
+}
+
+#google_translate_element .skiptranslate {
+  font-size: 0;
+}
+
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important;
 }

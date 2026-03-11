@@ -32,7 +32,7 @@ const plans = [
 
 const InvestmentSolutions = () => {
   return (
-    <section className="bg-black py-24 md:py-32">
+    <section  id="plan" className="bg-black py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <ScrollAnimation animation="fadeUp">

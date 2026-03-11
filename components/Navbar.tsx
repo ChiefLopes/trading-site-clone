@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Home", href: "#home" },
@@ -44,11 +45,11 @@ const Navbar = () => {
         </ul>
 
         {/* CTA Button */}
-        <a
-          href="#get-started"
-          className="hidden md:inline-flex items-center px-6 py-2.5 rounded-full border border-[#b4f12c] text-[#b4f12c] text-sm font-semibold hover:bg-[#b4f12c] hover:text-[#0a0f0d] transition-all duration-300">
+        <Link
+          href="/register"
+          className="hidden md:inline-flex items-center px-6 py-4 rounded-lg bg-[#7b6ef6] text-white text-sm font-semibold hover:bg-[#6a5de6] transition-all duration-300">
           Get Started
-        </a>
+        </Link>
 
         {/* Mobile Menu Button */}
         <button
@@ -82,11 +83,11 @@ const Navbar = () => {
             </li>
           ))}
           <li>
-            <a
-              href="#get-started"
-              className="inline-flex items-center px-6 py-2.5 rounded-full border border-[#b4f12c] text-[#b4f12c] text-sm font-semibold hover:bg-[#b4f12c] hover:text-[#0a0f0d] transition-all duration-300">
+            <Link
+              href="/register"
+              className="inline-flex items-center px-6 py-2.5 rounded-full bg-[#7b6ef6] text-white text-sm font-semibold hover:bg-[#6a5de6] transition-all duration-300">
               Get Started
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

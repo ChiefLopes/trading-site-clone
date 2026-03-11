@@ -67,7 +67,7 @@ const HeroSection = () => {
         <div className="mb-4 text-3xl animate-bounce-slow">🏆</div>
 
         {/* Title */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+        <h1 className="text-4xl font-bold leading-tight">
           <span className="text-[#c8e632]">Infinity Digital Trade</span>
           <br />
           <span className="text-white mt-1.5 block font-semibold mix-blend-plus-lighter">
@@ -76,7 +76,7 @@ const HeroSection = () => {
         </h1>
 
         {/* Description */}
-        <p className="mt-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
+        <p className="mt-6 text-gray-200 text-base md:text-lg leading-relaxed max-w-2xl">
           Our trading platform helps you access real-time data, expert insights,
           and advanced tools to make informed decisions and maximize profits
         </p>
@@ -84,7 +84,7 @@ const HeroSection = () => {
         {/* CTA Button */}
         <a
           href="#get-started"
-          className="mt-10 inline-flex items-center px-8 py-3.5 rounded-lg bg-[#c8e632] text-[#0a0f0d] font-bold text-sm tracking-wide hover:bg-[#b4f12c] hover:shadow-[0_0_30px_rgba(180,241,44,0.3)] transition-all duration-300 hover:scale-105">
+          className="mt-10 inline-flex items-center px-8 py-5 rounded-lg bg-[#c8e632] text-[#0a0f0d] font-bold text-sm tracking-wide hover:bg-[#b4f12c] hover:shadow-[0_0_30px_rgba(180,241,44,0.3)] transition-all duration-300 hover:scale-105">
           Start Trading
         </a>
       </div>

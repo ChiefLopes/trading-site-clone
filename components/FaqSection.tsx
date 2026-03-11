@@ -43,7 +43,7 @@ const FaqSection = () => {
         />
       </div>
 
-      <div className="max-w-5xl mx-auto px-6">
+      <div id="faq" className="max-w-5xl mx-auto px-6">
         <ScrollAnimation animation="fadeUp">
           <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-16 leading-tight">
             FAQ Here

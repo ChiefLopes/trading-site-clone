@@ -118,7 +118,7 @@ const TradingTeam = () => {
         />
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6">
+      <div id="team" className="max-w-[1400px] mx-auto px-6">
         <ScrollAnimation animation="fadeUp">
           <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-20 leading-tight">
             Our Trading Team
