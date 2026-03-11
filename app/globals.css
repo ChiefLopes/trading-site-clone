@@ -9,7 +9,7 @@ html {
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 @theme inline {
@@ -205,9 +205,9 @@ body {
 }
 
 .goog-te-gadget .goog-te-combo {
-  background-color: #1a1a1a;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 12px;
@@ -216,8 +216,8 @@ body {
 }
 
 .goog-te-gadget .goog-te-combo option {
-  background-color: #1a1a1a;
-  color: #fff;
+  background-color: #fff;
+  color: #000;
 }
 
 .goog-te-gadget > span {
@@ -230,4 +230,23 @@ body {
 
 .VIpgJd-ZVi9od-ORHb-OEVmcd {
   display: none !important;
+}
+
+/* Scrollbar styling for scrollable tables */
+.scrollbar-visible::-webkit-scrollbar {
+  height: 14px;
+}
+.scrollbar-visible::-webkit-scrollbar-track {
+  background: #374151;
+  border-radius: 9999px;
+}
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 9999px;
+}
+.scrollbar-visible::-webkit-scrollbar-button {
+  display: block;
+  width: 18px;
+  background: #4b5563;
+  border-radius: 4px;
 }

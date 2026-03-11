@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import GoogleTranslate from "@/components/GoogleTranslate";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -164,8 +165,15 @@ export default function DashboardLayout({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-h-[calc(100vh-64px)] min-w-0">
-          <div className="p-4 md:p-6 lg:p-8">{children}</div>
+        <main className="flex-1 min-h-[calc(100vh-64px)] min-w-0 flex flex-col">
+          <div className="p-4 md:p-6 lg:p-8 flex-1">{children}</div>
+          {/* Footer */}
+          <div className="px-4 md:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-[#22c55e]/70 italic">
+              All Rights Reserved © Infinity Digital Trade 2026
+            </p>
+            <GoogleTranslate />
+          </div>
         </main>
       </div>
     </div>

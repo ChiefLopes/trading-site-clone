@@ -1,47 +1,79 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 export default function PurchaseStockPage() {
-  const [symbol, setSymbol] = useState("");
-  const [amount, setAmount] = useState("");
+  const columns = [
+    "Full Name",
+    "Contact",
+    "Full Address",
+    "City",
+    "State",
+    "Zipcode",
+    "Duration",
+    "Submitted at",
+    "Started at",
+    "Expiring at",
+    "Status",
+  ];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white mb-2">Purchase Stock</h1>
-      <p className="text-gray-400 text-sm mb-8">Buy stocks and equities</p>
+      {/* Page Title */}
+      <h1 className="text-2xl md:text-3xl font-semibold text-white mb-6">
+        Tesla Application
+      </h1>
 
-      <div className="max-w-md">
-        <div className="bg-[#111916] border border-white/5 rounded-xl p-6 space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-white mb-1.5">
-              Stock Symbol
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. TSLA, AAPL, NVDA"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#7b6ef6]/50 transition-colors"
-            />
-          </div>
+      {/* Partnership Info Card */}
+      <div className="border border-white/10 rounded-lg p-6 md:p-8 mb-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+          Infinity Digital Trade Tesla Partnership
+        </h2>
 
-          <div>
-            <label className="block text-sm font-medium text-white mb-1.5">
-              Amount (USD)
-            </label>
-            <input
-              type="number"
-              placeholder="Enter amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#7b6ef6]/50 transition-colors"
-            />
-          </div>
+        <p className="text-gray-400 text-sm mb-1">
+          Would Love to own a tesla? Kindly make your tesla purchase using the
+          balance left in your investment account
+        </p>
+        <p className="text-gray-400 text-xs mb-1">Terms and Conditions apply</p>
+        <p className="text-gray-400 text-xs mb-8">
+          Reach us at support@infinitydigitaltrade.com for more info.
+        </p>
 
-          <button className="w-full py-3 rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] text-white font-semibold text-sm transition-colors">
-            Purchase
-          </button>
+        {/* Apply Button */}
+        <button className="px-10 py-3 bg-white text-black font-semibold text-sm rounded hover:bg-green-600 hover:text-white transition-colors duration-200 ease-linear">
+          Purchase
+        </button>
+      </div>
+
+      {/* Filed Tesla Application Table */}
+      <div className="border border-white/10 rounded-lg p-6 md:p-8">
+        <h2 className="text-white font-bold text-lg mb-6">
+          Filed Tesla Application
+        </h2>
+
+        <div className="overflow-x-auto scrollbar-visible">
+          <table className="w-full text-sm min-w-[1100px]">
+            <thead>
+              <tr className="border-b border-white/10">
+                {columns.map((col) => (
+                  <th
+                    key={col}
+                    className="text-left py-3 px-3 text-gray-400 font-semibold text-xs whitespace-nowrap">
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-8 text-[#22c55e] text-sm">
+                  No data available
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

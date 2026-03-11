@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import GoogleTranslate from "@/components/GoogleTranslate";
 
 const paymentMethods = [
   { id: "usdt_erc20", label: "USDT ERC20" },
@@ -92,14 +91,6 @@ export default function DepositPage() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-[#22c55e]/70 italic">
-          All Rights Reserved © Infinity Digital Trade 2026
-        </p>
-        <GoogleTranslate />
       </div>
     </div>
   );

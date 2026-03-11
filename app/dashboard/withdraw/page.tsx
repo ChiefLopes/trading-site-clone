@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import GoogleTranslate from "@/components/GoogleTranslate";
+
 import Image from "next/image";
 import { Mail } from "lucide-react";
 
@@ -158,14 +158,6 @@ export default function WithdrawPage() {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="mt-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[#22c55e]/70 italic">
-            All Rights Reserved © Infinity Digital Trade 2026
-          </p>
-          <GoogleTranslate />
-        </div>
       </div>
     );
   }
@@ -248,14 +240,6 @@ export default function WithdrawPage() {
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-12 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-[#22c55e]/70 italic">
-          All Rights Reserved © Infinity Digital Trade 2026
-        </p>
-        <GoogleTranslate />
       </div>
     </div>
   );
