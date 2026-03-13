@@ -1,18 +1,24 @@
 import { PrismaClient } from "@prisma/client";
 
 // Singleton to prevent multiple instances of Prisma Client in development.
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-
-const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
-
 const prismaClientSingleton = () => {
+  const url = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL;
+  
+  if (!url && process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== 'phase-production-build') {
+    console.warn("⚠️ DATABASE_URL or POSTGRES_URL is missing in production!");
+  }
+
   return new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy?sslmode=disable",
+    datasourceUrl: url,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 };
 
-export const prisma = globalForPrisma.prisma ?? (isBuild ? {} as any : prismaClientSingleton());
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+
+// During build, we provide a placeholder OR the real client. 
+// Note: returning {} can break NextAuth adapter initialization if it expects certain properties.
+export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
