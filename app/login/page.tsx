@@ -3,18 +3,40 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Mail, KeyRound } from "lucide-react";
+import { Mail, KeyRound, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const router = useRouter();
+  const [formError, setFormError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/dashboard");
+    setFormError("");
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: "/dashboard",
+    });
+
+    if (result?.error) {
+      setFormError("Invalid email or password.");
+      return;
+    }
+
+    router.push(result?.url ?? "/dashboard");
+  };
+
+  const handleOAuthSignIn = (provider: "google") => {
+    setFormError("");
+    void signIn(provider, { callbackUrl: "/dashboard" });
   };
 
   return (
@@ -61,13 +83,20 @@ export default function LoginPage() {
               <KeyRound size={18} />
             </div>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Enter Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full pl-12 pr-4 py-3.5 rounded-lg bg-white text-sm text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#7b6ef6]/50 transition-all"
+              className="w-full pl-12 pr-12 py-3.5 rounded-lg bg-white text-sm text-gray-800 placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#7b6ef6]/50 transition-all"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#7b6ef6] transition-colors"
+              tabIndex={-1}>
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
 
           {/* Remember me & Forgot password */}
@@ -95,6 +124,19 @@ export default function LoginPage() {
             Sign in
           </button>
         </form>
+
+        {formError && (
+          <p className="mt-4 text-xs text-amber-300 text-center">{formError}</p>
+        )}
+
+        <div className="mt-6 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => handleOAuthSignIn("google")}
+            className="w-full py-3 rounded-lg bg-white text-gray-900 font-semibold text-sm hover:bg-gray-100 transition-colors">
+            Continue with Google
+          </button>
+        </div>
 
         {/* Sign Up Link */}
         <p className="text-center mt-8 text-sm text-gray-400">

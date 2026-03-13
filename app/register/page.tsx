@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 const countries = [
   "Afghanistan",
@@ -202,6 +205,7 @@ const countries = [
 ];
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     email: "",
     name: "",
@@ -212,6 +216,10 @@ export default function RegisterPage() {
     confirmPassword: "",
     referralId: "",
   });
+  const [formError, setFormError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -219,9 +227,63 @@ export default function RegisterPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic
+    setFormError("");
+
+    if (form.password !== form.confirmPassword) {
+      setFormError("Passwords do not match.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          name: form.name,
+          username: form.username,
+          phone: form.phone,
+          country: form.country,
+          password: form.password,
+          referralId: form.referralId,
+        }),
+      });
+
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        setFormError(data.error || "Registration failed.");
+        return;
+      }
+
+      const signInResult = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      });
+
+      if (signInResult?.error) {
+        setFormError("Account created. Please log in.");
+        router.push("/login");
+        return;
+      }
+
+      router.push(signInResult?.url ?? "/dashboard");
+    } catch (error) {
+      setFormError("Registration failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOAuthSignIn = (provider: "google") => {
+    setFormError("");
+    void signIn(provider, { callbackUrl: "/dashboard" });
   };
 
   return (
@@ -343,15 +405,24 @@ export default function RegisterPage() {
             <label className="block text-sm font-bold text-white mb-1.5">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2.5 rounded-md bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#22c55e]/50 transition-colors"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2.5 pr-12 rounded-md bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#22c55e]/50 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#22c55e] transition-colors"
+                tabIndex={-1}>
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {/* Confirm Password */}
@@ -359,15 +430,24 @@ export default function RegisterPage() {
             <label className="block text-sm font-bold text-white mb-1.5">
               Confirm Password
             </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2.5 rounded-md bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#22c55e]/50 transition-colors"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2.5 pr-12 rounded-md bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#22c55e]/50 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#22c55e] transition-colors"
+                tabIndex={-1}>
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {/* Referral ID */}
@@ -388,10 +468,24 @@ export default function RegisterPage() {
           {/* Submit */}
           <button
             type="submit"
-            className="w-full py-3 rounded-md bg-[#dc2626] hover:bg-[#b91c1c] text-white font-semibold text-sm transition-colors duration-200">
-            Create Account
+            disabled={isSubmitting}
+            className="w-full py-3 rounded-md bg-[#dc2626] hover:bg-[#b91c1c] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold text-sm transition-colors duration-200">
+            {isSubmitting ? "Creating account..." : "Create Account"}
           </button>
         </form>
+
+        {formError && (
+          <p className="mt-4 text-xs text-amber-300 text-center">{formError}</p>
+        )}
+
+        <div className="mt-6 flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={() => handleOAuthSignIn("google")}
+            className="w-full py-3 rounded-lg bg-white text-gray-900 font-semibold text-sm hover:bg-gray-100 transition-colors">
+            Continue with Google
+          </button>
+        </div>
 
         {/* Sign In Link */}
         <p className="text-center mt-5">
