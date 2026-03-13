@@ -3,16 +3,16 @@ import { PrismaClient } from "@prisma/client";
 // Singleton to prevent multiple instances of Prisma Client in development.
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-// We use a dummy URL during build to prevent Prisma from failing if the env var isn't passed to the build worker
-const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy?sslmode=disable";
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    datasourceUrl: connectionString,
+const prismaClientSingleton = () => {
+  return new PrismaClient({
+    datasourceUrl: process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy?sslmode=disable",
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-    errorFormat: 'pretty',
   });
+};
+
+export const prisma = globalForPrisma.prisma ?? (isBuild ? {} as any : prismaClientSingleton());
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
