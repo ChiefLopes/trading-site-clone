@@ -1,10 +1,11 @@
-import React from "react";
+import React, { Suspense } from "react";
 export const dynamic = "force-dynamic";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import WelcomeToast from "@/components/dashboard/WelcomeToast";
 
 export default async function DashboardLayout({
   children,
@@ -12,13 +13,21 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-
   if (!session) {
     redirect("/login");
+  }
+  // If not verified and not Google, redirect to verify-email  
+  const provider = (session as any).provider;
+  const isVerified = (session.user as any)?.emailVerified || false;
+  if (!isVerified && provider !== "google" && session.user?.email) {
+    redirect(`/verify-email?email=${encodeURIComponent(session.user.email)}`);
   }
 
   return (
     <div className="min-h-screen bg-[#0a0f0d]">
+      <Suspense fallback={null}>
+        <WelcomeToast />
+      </Suspense>
       <DashboardHeader user={session.user} />
 
       <div className="flex pt-16">
@@ -26,7 +35,7 @@ export default async function DashboardLayout({
 
         <main className="flex-1 min-h-[calc(100vh-64px)] min-w-0 flex flex-col">
           <div className="p-4 md:p-6 lg:p-8 flex-1">{children}</div>
-          
+
           <footer className="px-4 md:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5">
             <p className="text-sm text-[#22c55e]/70 italic">
               All Rights Reserved © Infinity Digital Trade 2026

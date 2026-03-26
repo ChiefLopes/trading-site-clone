@@ -15,6 +15,8 @@ import {
   UserCircle,
   Menu,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const sidebarLinks = [
@@ -32,9 +34,10 @@ const sidebarLinks = [
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
-  const SidebarContent = ({ onLinkClick }: { onLinkClick?: () => void }) => (
-    <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-8 lg:gap-y-2 p-4">
+  const SidebarContent = ({ onLinkClick, isDesktopExpanded = true }: { onLinkClick?: () => void, isDesktopExpanded?: boolean }) => (
+    <div className={`grid grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-8 lg:gap-y-2 p-4 ${!isDesktopExpanded ? 'lg:flex lg:flex-col lg:items-center' : ''}`}>
       {sidebarLinks.map((link) => {
         const isActive =
           pathname === link.href ||
@@ -45,16 +48,19 @@ export default function DashboardSidebar() {
             key={link.href}
             href={link.href}
             onClick={onLinkClick}
-            className={`flex flex-col lg:flex-row items-center gap-2 lg:gap-3 py-4 lg:py-3 px-2 lg:px-4 rounded-xl transition-all duration-200 ${
+            title={!isDesktopExpanded ? link.label.replace('\n', ' ') : undefined}
+            className={`flex flex-col lg:flex-row items-center gap-2 lg:gap-3 py-4 lg:py-3 px-2 rounded-xl transition-all duration-200 ${
+              isDesktopExpanded ? 'lg:px-4 lg:w-full lg:min-w-max lg:justify-start' : 'lg:p-3 lg:w-12 lg:h-12 lg:justify-center'
+            } ${
               isActive
                 ? "bg-white/5 border border-white/10 lg:border-none lg:bg-[#22c55e]/10 lg:text-[#22c55e]"
-                : "hover:bg-white/5 text-gray-400"
+                : "hover:bg-white/5 text-gray-400 lg:hover:text-white"
             }`}>
-            <Icon size={22} className={isActive ? "text-white lg:text-[#22c55e]" : ""} />
+            <Icon size={isDesktopExpanded ? 22 : 24} className={`shrink-0 ${isActive ? "text-white lg:text-[#22c55e]" : ""}`} />
             <span
               className={`text-xs lg:text-sm text-center lg:text-left leading-tight whitespace-pre-line ${
                 isActive ? "text-white lg:text-[#22c55e] font-medium" : ""
-              }`}>
+              } ${!isDesktopExpanded ? 'lg:hidden' : 'lg:block'}`}>
               {link.label}
             </span>
           </Link>
@@ -68,15 +74,23 @@ export default function DashboardSidebar() {
       {/* Mobile Trigger - Absolutely positioned relative to header height */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 right-4 z-[60] text-white p-1"
+        className="lg:hidden fixed top-[16px] right-4 z-[70] text-white hover:text-[#22c55e] transition-colors flex items-center justify-center p-1"
         aria-label="Toggle menu">
-        {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       {/* Sidebar - Desktop */}
-      <aside className="hidden lg:block w-[280px] shrink-0 min-h-[calc(100vh-64px)] sticky top-16 self-start overflow-y-auto py-4 border-r border-white/5">
-        <SidebarContent />
-      </aside>
+      <div className={`hidden lg:block relative shrink-0 min-h-[calc(100vh-64px)] sticky top-16 self-start transition-all duration-300 border-r border-white/5 bg-[#0a0f0d] z-20 ${isExpanded ? 'w-[280px]' : 'w-[80px]'}`}>
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="absolute -right-3.5 top-6 bg-[#141c18] border border-white/10 hover:border-white/30 rounded-full p-1.5 text-gray-400 hover:text-white z-50 flex items-center justify-center transition-all shadow-md"
+        >
+          {isExpanded ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+        </button>
+        <aside className="w-full h-[calc(100vh-64px)] overflow-y-auto py-4 flex flex-col no-scrollbar overflow-x-hidden">
+          <SidebarContent isDesktopExpanded={isExpanded} />
+        </aside>
+      </div>
 
       {/* Mobile Sidebar Overlay */}
       {mobileOpen && (

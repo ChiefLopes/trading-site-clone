@@ -23,6 +23,7 @@ export default async function ProfilePage() {
           email: true,
           phone: true,
           country: true,
+          username: true,
           referralId: true,
         },
       }),
@@ -34,6 +35,7 @@ export default async function ProfilePage() {
     email: user?.email ?? session.user.email ?? "",
     phone: user?.phone ?? "",
     country: user?.country ?? "",
+    username: user?.username ?? "",
     referralId: user?.referralId ?? "",
   };
 

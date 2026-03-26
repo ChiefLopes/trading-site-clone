@@ -1,19 +1,27 @@
-import NextAuth from "next-auth";
 import authConfig from "./auth.config";
+import NextAuth from "next-auth";
+import type { NextRequest } from "next/server";
 
-/**
- * Next.js 16+ "proxy" convention (formerly middleware)
- * We export a named function 'proxy' and provide it as default.
- */
-const { auth: authHandler } = NextAuth(authConfig);
+const { auth } = NextAuth(authConfig);
 
-export async function proxy(req: any, ctx: any) {
-  return (authHandler as any)(req, ctx);
-}
+export const proxy = auth(async function proxy(req: NextRequest & { auth: any }) {
+  const url = req.nextUrl;
+  const session = req.auth;
 
-export default proxy;
+  const isDashboard = url.pathname.startsWith("/dashboard");
+
+  if (!isDashboard) return; // Allow all non-dashboard requests through
+
+  const isLoggedIn = !!session?.user;
+
+  if (!isLoggedIn) {
+    return Response.redirect(new URL("/login", url));
+  }
+
+  // All other checks (OTP verification, provider-based bypass) are handled
+  // in the dashboard layout which has full Node.js + Prisma access.
+});
 
 export const config = {
-  // Matching everything except static files and api routes that don't need auth
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api/auth|api|_next/static|_next/image|favicon.ico).*)"],
 };

@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import TradingViewTickerTape from "./TradingViewTickerTape";
 
 const HeroSection = () => {
+  const [isTickerLoaded, setIsTickerLoaded] = useState(false);
+
   return (
     <section
       id="home"
@@ -55,7 +57,6 @@ const HeroSection = () => {
         <div
           className="absolute left-0 w-full h-[1px] z-20 animate-scan-line"
           style={{
-           
             background:
               "linear-gradient(90deg, transparent, rgba(200,230,50,0.4) 20%, rgba(200,230,50,0.6) 50%, rgba(200,230,50,0.4) 80%, transparent)",
           }}
@@ -83,15 +84,28 @@ const HeroSection = () => {
 
         {/* CTA Button */}
         <a
-          href="#get-started"
+          href="/login"
           className="mt-10 inline-flex items-center px-8 py-5 rounded-lg bg-[#c8e632] text-[#0a0f0d] font-bold text-sm tracking-wide hover:bg-[#b4f12c] hover:shadow-[0_0_30px_rgba(180,241,44,0.3)] transition-all duration-300 hover:scale-105">
           Start Trading
         </a>
       </div>
 
       {/* Stock Ticker Marquee */}
-      <div className="absolute bottom-0 left-0 w-full z-10">
-        <TradingViewTickerTape />
+      <div className="absolute bottom-0 left-0 w-full z-10 min-h-[46px] bg-[#060b09]/80 backdrop-blur-sm border-t border-white/5">
+        {!isTickerLoaded && (
+          <div className="absolute inset-0 flex items-center justify-around gap-4 px-4 overflow-hidden">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="h-4 w-32 bg-white/5 rounded animate-pulse shrink-0"
+              />
+            ))}
+          </div>
+        )}
+        <div
+          className={`transition-opacity duration-500 ${isTickerLoaded ? "opacity-100" : "opacity-0"}`}>
+          <TradingViewTickerTape onLoad={() => setIsTickerLoaded(true)} />
+        </div>
       </div>
     </section>
   );

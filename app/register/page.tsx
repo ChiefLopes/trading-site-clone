@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 
 const countries = [
@@ -204,7 +204,7 @@ const countries = [
   "Zimbabwe",
 ];
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const [form, setForm] = useState({
     email: "",
@@ -220,6 +220,26 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Read the referral ID from query param OR the referral_id cookie
+  React.useEffect(() => {
+    // 1. Check query param: /register?ref=CHIEFLOPES
+    const refParam = searchParams.get("ref");
+    if (refParam) {
+      setForm((prev) => ({ ...prev, referralId: refParam }));
+      return;
+    }
+
+    // 2. Check cookie (set by the /ref/[id] redirect)
+    const cookies = document.cookie.split("; ");
+    const refCookie = cookies
+      .find((c) => c.startsWith("referral_id="))
+      ?.split("=")[1];
+    if (refCookie) {
+      setForm((prev) => ({ ...prev, referralId: refCookie }));
+    }
+  }, [searchParams]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -450,7 +470,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Referral ID */}
           <div>
             <label className="block text-sm font-bold text-white mb-1.5">
               Referral ID
@@ -461,6 +480,8 @@ export default function RegisterPage() {
               placeholder="Referral ID (optional)"
               value={form.referralId}
               onChange={handleChange}
+              // If it's pre-filled via cookie/param, make it clearer by keeping it editable,
+              // but you could add a 'readOnly' if you want it locked.
               className="w-full px-4 py-2.5 rounded-md bg-[#1a2420] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#22c55e]/50 transition-colors"
             />
           </div>
@@ -497,5 +518,13 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0f0d] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#22c55e] border-t-transparent rounded-full animate-spin" /></div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

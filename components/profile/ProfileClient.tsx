@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Upload, ShieldCheck, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Upload, ShieldCheck, AlertCircle, ArrowRight } from "lucide-react";
 
 type Tab = "personal" | "kyc" | "withdrawal" | "password" | "other";
 
@@ -11,7 +11,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "kyc", label: "KYC Verification" },
   { id: "withdrawal", label: "Withdrawal Settings" },
   { id: "password", label: "Password/Security" },
-  { id: "other", label: "Other Settings" },
+  // { id: "other", label: "Other Settings" },
 ];
 
 const countries = [
@@ -24,6 +24,7 @@ interface ProfileClientProps {
     email: string;
     phone: string;
     country: string;
+    username: string;
     referralId: string;
   };
 }
@@ -37,6 +38,40 @@ function ProfileContent({ initialData }: ProfileClientProps) {
   
   const [form, setForm] = useState(initialData);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  const [withdrawalForm, setWithdrawalForm] = useState({
+    bankName: "",
+    accountName: "",
+    accountNumber: "",
+    swiftCode: "",
+    bitcoinAddress: "",
+    ethereumAddress: "",
+    litecoinAddress: "",
+  });
+
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [otherSettings, setOtherSettings] = useState({
+    withdrawalOTP: true,
+    profitEmail: true,
+    planExpiryEmail: true,
+  });
+
+  const handleWithdrawalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWithdrawalForm({ ...withdrawalForm, [e.target.name]: e.target.value });
+  };
+
+  const handleOtherSettingsChange = (key: string, value: boolean) => {
+    setOtherSettings({ ...otherSettings, [key]: value });
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
+  };
 
   useEffect(() => {
     const tab = searchParams.get("tab") as Tab;
@@ -59,6 +94,7 @@ function ProfileContent({ initialData }: ProfileClientProps) {
           fullname: form.fullname,
           phone: form.phone,
           country: form.country,
+          username: form.username,
         }),
       });
       if (!response.ok) {
@@ -101,6 +137,11 @@ function ProfileContent({ initialData }: ProfileClientProps) {
               <div>
                 <label className="block text-sm text-gray-400 mb-2 font-medium">Email Address</label>
                 <input type="email" name="email" value={form.email} readOnly className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-500 cursor-not-allowed outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-2 font-medium">Username</label>
+                <input type="text" name="username" value={form.username} onChange={handleChange} placeholder="e.g. johndoe4829" className="w-full px-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white outline-none focus:border-[#22c55e]/50 focus:ring-1 focus:ring-[#22c55e]/50 transition-all" />
+                <p className="text-xs text-gray-500 mt-1">Lowercase letters and numbers only. Used for your referral link.</p>
               </div>
               <div>
                 <label className="block text-sm text-gray-400 mb-2 font-medium">Phone Number</label>
@@ -161,6 +202,152 @@ function ProfileContent({ initialData }: ProfileClientProps) {
              </button>
            </div>
         )}
+
+        {/* Withdrawal Settings Tab */}
+        {activeTab === "withdrawal" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+              {/* Bank Name */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Bank Name</label>
+                <input type="text" name="bankName" placeholder="Enter bank name" value={withdrawalForm.bankName} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+              </div>
+              {/* Account Name */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Account Name</label>
+                <input type="text" name="accountName" placeholder="Enter Account name" value={withdrawalForm.accountName} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+              </div>
+              {/* Account Number */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Account Number</label>
+                <input type="text" name="accountNumber" placeholder="Enter Account Number" value={withdrawalForm.accountNumber} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+              </div>
+              {/* Swift Code */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Swift Code</label>
+                <input type="text" name="swiftCode" placeholder="Enter Swift Code" value={withdrawalForm.swiftCode} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+              </div>
+              {/* Bitcoin */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Bitcoin</label>
+                <input type="text" name="bitcoinAddress" placeholder="Enter Bitcoin Address" value={withdrawalForm.bitcoinAddress} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+                <p className="text-[11px] text-gray-400 mt-2">Enter your Bitcoin Address that will be used to withdraw your funds</p>
+              </div>
+              {/* Ethereum */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Ethereum</label>
+                <input type="text" name="ethereumAddress" placeholder="Enter Etherium Address" value={withdrawalForm.ethereumAddress} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+                <p className="text-[11px] text-gray-400 mt-2">Enter your Ethereum Address that will be used to withdraw your funds</p>
+              </div>
+              {/* Litecoin */}
+              <div className="md:col-span-1">
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Litecoin</label>
+                <input type="text" name="litecoinAddress" placeholder="Enter Litcoin Address" value={withdrawalForm.litecoinAddress} onChange={handleWithdrawalChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all placeholder:text-gray-500" />
+                <p className="text-[11px] text-gray-400 mt-2">Enter your Litecoin Address that will be used to withdraw your funds</p>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <button className="px-10 py-2.5 bg-white text-black font-semibold text-sm rounded hover:bg-gray-200 transition-colors shadow-sm active:scale-95">
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Password/Security Tab */}
+        {activeTab === "password" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+              {/* Old Password */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Old Password</label>
+                <input type="password" name="oldPassword" value={passwordForm.oldPassword} onChange={handlePasswordChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all" />
+              </div>
+              {/* New Password */}
+              <div>
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">New Password</label>
+                <input type="password" name="newPassword" value={passwordForm.newPassword} onChange={handlePasswordChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all" />
+              </div>
+              {/* Confirm New Password */}
+              <div className="md:col-span-1">
+                <label className="block text-[13px] text-gray-300 mb-2 font-medium tracking-wide">Confirm New Password</label>
+                <input type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={handlePasswordChange} className="w-full px-4 py-3 rounded bg-transparent border border-white/10 text-[13px] text-white outline-none focus:border-[#22c55e] transition-all" />
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <button className="px-6 py-2.5 bg-white text-black font-semibold text-sm rounded hover:bg-gray-200 transition-colors shadow-sm active:scale-95">
+                Update Password
+              </button>
+            </div>
+
+            <div className="pt-4">
+              <a href="#advance" className="inline-flex items-center gap-1.5 text-[15px] text-white font-medium hover:text-[#22c55e] transition-colors">
+                Advance Account Settings <ArrowRight size={18} strokeWidth={2.5} />
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Other Settings Tab - commented out
+        {activeTab === "other" && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
+              <div>
+                <p className="block text-[14px] text-gray-300 mb-4 font-medium tracking-wide">
+                  Send confirmation OTP to my email when withdrawing my funds.
+                </p>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="withdrawalOTP" checked={otherSettings.withdrawalOTP} onChange={() => handleOtherSettingsChange("withdrawalOTP", true)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="withdrawalOTP" checked={!otherSettings.withdrawalOTP} onChange={() => handleOtherSettingsChange("withdrawalOTP", false)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">No</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <p className="block text-[14px] text-gray-300 mb-4 font-medium tracking-wide">
+                  Send me email when i get profit.
+                </p>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="profitEmail" checked={otherSettings.profitEmail} onChange={() => handleOtherSettingsChange("profitEmail", true)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="profitEmail" checked={!otherSettings.profitEmail} onChange={() => handleOtherSettingsChange("profitEmail", false)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">No</span>
+                  </label>
+                </div>
+              </div>
+              <div className="md:col-span-1">
+                <p className="block text-[14px] text-gray-300 mb-4 font-medium tracking-wide">
+                  Send me email when my investment plan expires.
+                </p>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="planExpiryEmail" checked={otherSettings.planExpiryEmail} onChange={() => handleOtherSettingsChange("planExpiryEmail", true)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">Yes</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer group">
+                    <input type="radio" name="planExpiryEmail" checked={!otherSettings.planExpiryEmail} onChange={() => handleOtherSettingsChange("planExpiryEmail", false)} className="w-4 h-4 accent-[#b062ca] bg-transparent border-gray-500 cursor-pointer" />
+                    <span className="text-[14px] text-gray-300 group-hover:text-white transition-colors">No</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="pt-6">
+              <button className="px-10 py-2.5 bg-white text-black font-semibold text-sm rounded hover:bg-gray-200 transition-colors shadow-sm active:scale-95">
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+        */}
       </div>
     </div>
   );

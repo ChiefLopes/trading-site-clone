@@ -1,14 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, ChevronUp, ChevronDown, UserCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Copy, ChevronUp, ChevronDown, UserCircle, Check } from "lucide-react";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function ReferralsPage() {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [search, setSearch] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [username, setUsername] = useState("");
+
+  const { data: session } = useSession();
+
+  // Fetch the actual username from DB
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetch("/api/user/username")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.username) setUsername(data.username);
+        })
+        .catch(() => {});
+    }
+  }, [session?.user?.email]);
+
+  const referralLink = `https://infinitydigitaltrade.com/ref/${username || "user"}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("https://infinitydigitaltrade.com/ref/Brown");
+    navigator.clipboard.writeText(referralLink);
+    setCopied(true);
+    toast.success("link copied");
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const columns = [
@@ -35,17 +58,17 @@ export default function ReferralsPage() {
           </p>
           <div className="flex items-center justify-center gap-0 max-w-xl mx-auto">
             <div className="flex-1 px-4 py-3 bg-[#1a1a1a] border border-white/20 rounded-l-lg text-sm text-gray-300 text-left truncate">
-              https://infinitydigitaltrade.com/ref/Brown
+              {referralLink}
             </div>
             <button
               onClick={handleCopy}
               className="px-4 py-3 bg-[#2a2a2a] border border-white/20 border-l-0 rounded-r-lg text-gray-400 hover:text-white transition-colors">
-              <Copy size={16} />
+              {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
             </button>
           </div>
 
           <p className="text-sm text-gray-400 mt-4">or your Referral ID</p>
-          <p className="text-[#22c55e] text-lg font-medium mt-1">Brown</p>
+          <p className="text-[#22c55e] text-lg font-medium mt-1">{username || "..."}</p>
         </div>
 
         {/* Referred By Section */}

@@ -2,6 +2,7 @@ import React from "react";
 export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { auth } from "@/auth";
+import { prisma, safeDbQuery } from "@/lib/prisma";
 import { ArrowRight } from "lucide-react";
 import { FaCoins, FaSackDollar } from "react-icons/fa6";
 import { BsGiftFill } from "react-icons/bs";
@@ -11,7 +12,29 @@ import ReferralLink from "@/components/dashboard/ReferralLink";
 
 export default async function DashboardHome() {
   const session = await auth();
-  const userName = session?.user?.name || session?.user?.email?.split('@')[0] || "User";
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  const user = await safeDbQuery(
+    async () =>
+      await prisma.user.findUnique({
+        where: { email: session.user.email! },
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+          country: true,
+          username: true,
+          referralId: true,
+        },
+      }),
+    null // Fallback value if DB is unreachable
+  );
+
+  const userName = user?.name || session.user.name || "User";
+  const userUsername = user?.username || "";
 
   return (
     <div className="space-y-6">
@@ -122,7 +145,7 @@ export default async function DashboardHome() {
         <p className="text-sm text-gray-400 mb-6">
           Invite your friends to Infinity Digital Trade and earn up to 10% on their initial deposit.
         </p>
-        <ReferralLink username={userName} />
+        <ReferralLink username={userUsername} />
       </div>
     </div>
   );

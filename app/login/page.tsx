@@ -6,6 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Mail, KeyRound, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,12 +32,13 @@ export default function LoginPage() {
       return;
     }
 
-    router.push(result?.url ?? "/dashboard");
+    toast.success("Login successful! Welcome back.");
+    router.push(result?.url ?? "/dashboard?welcome=true");
   };
 
   const handleOAuthSignIn = (provider: "google") => {
     setFormError("");
-    void signIn(provider, { callbackUrl: "/dashboard" });
+    void signIn(provider, { callbackUrl: "/dashboard?welcome=true" });
   };
 
   return (

@@ -1,8 +1,11 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 import { prisma } from "@/lib/prisma";
+import { generateAndSendOTP } from "@/lib/mail";
+import { generateUsername } from "@/lib/username";
 
 export async function POST(request: Request) {
   try {
@@ -44,11 +47,16 @@ export async function POST(request: Request) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // Auto-generate username if not provided
+    const username =
+      body.username?.toString().trim() ||
+      (await generateUsername(body.name, email));
+
     await prisma.user.create({
       data: {
         email,
         name: body.name?.toString().trim() || null,
-        username: body.username?.toString().trim() || null,
+        username,
         phone: body.phone?.toString().trim() || null,
         country: body.country?.toString().trim() || null,
         referralId: body.referralId?.toString().trim() || null,
@@ -56,8 +64,12 @@ export async function POST(request: Request) {
       },
     });
 
+    // Generate and Send OTP
+    await generateAndSendOTP(email);
+
     return NextResponse.json({ ok: true });
   } catch (error) {
+    console.error("Registration error:", error);
     return NextResponse.json(
       { error: "Registration failed. Please try again." },
       { status: 500 },

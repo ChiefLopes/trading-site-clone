@@ -20,6 +20,7 @@ export async function GET() {
           email: true,
           phone: true,
           country: true,
+          username: true,
           referralId: true,
         },
       }),
@@ -35,6 +36,7 @@ export async function GET() {
     email: user.email ?? "",
     phone: user.phone ?? "",
     country: user.country ?? "",
+    username: user.username ?? "",
     referralId: user.referralId ?? "",
   });
 }
@@ -51,7 +53,25 @@ export async function PATCH(request: Request) {
     fullname?: string;
     phone?: string;
     country?: string;
+    username?: string;
   };
+
+  // Validate username: lowercase alphanumeric only
+  let username: string | undefined;
+  if (body.username) {
+    username = body.username.toString().trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (username.length < 3) {
+      return NextResponse.json({ error: "Username must be at least 3 characters." }, { status: 400 });
+    }
+    // Check uniqueness
+    const existing = await prisma.user.findFirst({
+      where: { username, NOT: { email } },
+      select: { id: true },
+    });
+    if (existing) {
+      return NextResponse.json({ error: "Username is already taken." }, { status: 409 });
+    }
+  }
 
   try {
     const user = await prisma.user.update({
@@ -60,12 +80,14 @@ export async function PATCH(request: Request) {
         name: body.fullname?.toString().trim() || null,
         phone: body.phone?.toString().trim() || null,
         country: body.country?.toString().trim() || null,
+        ...(username ? { username } : {}),
       },
       select: {
         name: true,
         email: true,
         phone: true,
         country: true,
+        username: true,
       },
     });
 
@@ -74,6 +96,7 @@ export async function PATCH(request: Request) {
       email: user.email ?? "",
       phone: user.phone ?? "",
       country: user.country ?? "",
+      username: user.username ?? "",
     });
   } catch (error) {
     console.error("Database update failed:", error);

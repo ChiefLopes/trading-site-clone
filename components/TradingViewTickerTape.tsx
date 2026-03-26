@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, memo } from "react";
 
-function TradingViewTickerTape() {
+function TradingViewTickerTape({ onLoad }: { onLoad?: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,6 +37,9 @@ function TradingViewTickerTape() {
       colorTheme: "dark",
       locale: "en",
     });
+    script.onload = () => {
+      if (onLoad) onLoad();
+    };
 
     container.appendChild(script);
 

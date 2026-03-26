@@ -19,7 +19,7 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f0d] border-b border-[#22c55e]/30 h-16 flex items-center justify-between px-4 md:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0f0d] border-b border-[#22c55e]/30 h-16 flex items-center justify-between pl-4 pr-14 lg:px-8">
       <div className="flex items-center gap-3">
         <Link href="/" className="flex items-center gap-2">
           <Image
