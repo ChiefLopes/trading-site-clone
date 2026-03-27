@@ -131,14 +131,14 @@ export default function LoginPage() {
           <p className="mt-4 text-xs text-amber-300 text-center">{formError}</p>
         )}
 
-        <div className="mt-6 flex flex-col gap-3">
+        {/* <div className="mt-6 flex flex-col gap-3">
           <button
             type="button"
             onClick={() => handleOAuthSignIn("google")}
             className="w-full py-3 rounded-lg bg-white text-gray-900 font-semibold text-sm hover:bg-gray-100 transition-colors">
             Continue with Google
           </button>
-        </div>
+        </div> */}
 
         {/* Sign Up Link */}
         <p className="text-center mt-8 text-sm text-gray-400">
