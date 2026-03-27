@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
-import { sendWelcomeEmail } from "@/lib/mail";
+import { generateAndSendOTP, sendWelcomeEmail } from "@/lib/mail";
 import { generateUsername } from "@/lib/username";
 import authConfig from "./auth.config";
 
@@ -61,7 +61,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
               // Generate username if the user doesn't have one
               if (!existingUser.username) {
-                const username = await generateUsername(existingUser.name, user.email);
+                const username = await generateUsername(
+                  existingUser.name,
+                  user.email,
+                );
                 await prisma.user.update({
                   where: { id: existingUser.id },
                   data: { username },
@@ -88,17 +91,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             const googleEmail = user.email;
             setTimeout(async () => {
               try {
-                const newUser = await prisma.user.findUnique({ where: { email: googleEmail } });
+                const newUser = await prisma.user.findUnique({
+                  where: { email: googleEmail },
+                });
                 if (newUser && !newUser.username) {
-                  const username = await generateUsername(googleName, googleEmail);
+                  const username = await generateUsername(
+                    googleName,
+                    googleEmail,
+                  );
                   await prisma.user.update({
                     where: { id: newUser.id },
                     data: { username },
                   });
-                  console.log(`Auto-generated username '${username}' for Google user ${googleEmail}`);
+                  console.log(
+                    `Auto-generated username '${username}' for Google user ${googleEmail}`,
+                  );
                 }
               } catch (err) {
-                console.error("Error generating username for Google user:", err);
+                console.error(
+                  "Error generating username for Google user:",
+                  err,
+                );
               }
             }, 2000);
             console.log(
